@@ -35,10 +35,12 @@ def calculate_sensitivity_specificity(y_test, y_pred_test):
 
 def dice_coef(y_true, y_pred, smooth=1):
     #NOTE: reference with additional info: https://towardsdatascience.com/metrics-to-evaluate-your-semantic-segmentation-model-6bcb99639aa2
-  intersection = K.sum(y_true * y_pred, axis=[1,2,3])
-  union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3])
-  dice = K.mean((2. * intersection + smooth)/(union + smooth), axis=0)
-  return dice
+    # https://towardsdatascience.com/image-segmentation-choosing-the-correct-metric-aa21fd5751af
+    intersection = tf.reduce_sum(y_true * y_pred, axis=-1)
+    denominator = tf.reduce_sum(y_true + y_pred, axis=-1)
+    f1 = (2 * intersection + smooth) / (denominator + smooth)
+
+    return (1 - f1) * smooth
 
 sensitivity, specificity, accuracy = calculate_sensitivity_specificity(y_test, y_pred_test)
 dice = dice_coef(y_true, y_pred, smooth=1)
