@@ -1,0 +1,14 @@
+ObjectType = Image
+NDims = 3
+BinaryData = True
+BinaryDataByteOrderMSB = False
+CompressedData = True
+CompressedDataSize = 23865
+TransformMatrix = 1 0 0 0 1 0 0 0 1
+Offset = -59.5883 -96.1976 -25.4587
+CenterOfRotation = 0 0 0
+AnatomicalOrientation = RPI
+ElementSpacing = 0.488281 0.488281 1
+DimSize = 271 333 86
+ElementType = MET_UCHAR
+ElementDataFile = prostaat.zraw

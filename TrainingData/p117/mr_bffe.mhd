@@ -1,0 +1,14 @@
+ObjectType = Image
+NDims = 3
+BinaryData = True
+BinaryDataByteOrderMSB = False
+CompressedData = True
+CompressedDataSize = 9766283
+TransformMatrix = 1 0 0 0 1 0 0 0 1
+Offset = -66.4063 -75.1086 -40.0297
+CenterOfRotation = 0 0 0
+AnatomicalOrientation = RPI
+ElementSpacing = 0.488281 0.488281 1
+DimSize = 271 333 86
+ElementType = MET_SHORT
+ElementDataFile = mr_bffe.zraw
