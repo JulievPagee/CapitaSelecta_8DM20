@@ -12,7 +12,7 @@ import numpy as np
 import imageio
 import os
 import SimpleITK as sitk
-import imageio
+
 
 #Functie die de path van de beste segmentatie teruggeeft.
 def GetBestAtlasSegmentationFile(fixed_img_path, atlasses):
