@@ -1,0 +1,5 @@
+# Git ignore
+
+# Ignore the normalized data directory and the results folder
+NormData/
+Results/

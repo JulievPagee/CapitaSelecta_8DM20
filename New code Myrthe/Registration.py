@@ -14,10 +14,10 @@ import os
 import SimpleITK as sitk
 import imageio
 
-fixed_image_path = 'E:/CSMIA/NormData/norm_img_0.mhd'
-moving_image_path = 'E:/CSMIA/NormData/norm_img_1.mhd'
+fixed_image_path = 'NormData/norm_img_0.mhd'
+moving_image_path = 'NormData/norm_img_1.mhd'
 
-dir_res = 'E:/CSMIA/resultstest5/'
+dir_res = '/Ivanatest/'
 
 ELASTIX_PATH = os.path.join(r'elastix.exe')
 TRANSFORMIX_PATH = os.path.join(r'transformix.exe')
