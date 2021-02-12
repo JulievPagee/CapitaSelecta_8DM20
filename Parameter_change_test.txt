@@ -1,0 +1,10 @@
+
+(FixedInternalImagePixelType "float")
+(MovingInternalImagePixelType "float")
+
+(FixedImageDimension 3)
+(MovingImageDimension 3)
+
+(NumberOfResolutions 3)
+(MaximumNumberOfIterations 500)
+(NumberOfSpatialSamples 4096)
