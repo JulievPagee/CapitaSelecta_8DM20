@@ -2,6 +2,7 @@
 import elastix
 import os
 import numpy as np
+import SimpleITK as sitk
 
 
 def Registration(fixed_image_path, atlas_path, parameter_path, ELASTIX_PATH, pnr ):
@@ -34,7 +35,7 @@ def mutual_information(fixed_img, atlas_img):
     nzs = pxy > 0 # Only non-zero pxy values contribute to the sum
     return np.sum(pxy[nzs] * np.log(pxy[nzs] / px_py[nzs]))
 
-def AdjustParameters(par_path, nrRes=3, maxIt=500, nrSamples=4096):
+def AdjustParameters(par_path, nrRes=3, penalty=0, nrSamples=4096):
     """ Function to adjust the parameters of Elastix. The function creates a new parameter file as filename_adj.txt and returns its path.
     Par_path is the path to the parameter file, including filename.txt
     The parameters need to be given as integers.
@@ -43,17 +44,17 @@ def AdjustParameters(par_path, nrRes=3, maxIt=500, nrSamples=4096):
 
     # If parameter does not have the default value, set "to adjust" to True.
     adj_nrRes = False
-    adj_maxIt = False
+    adj_penalty = False
     adj_nrSamples = False
     # Default values
     def_nrRes = 3
-    def_maxIt = 500
+    def_penalty = 0
     def_nrSamples = 4096
     # Check if it needs to be adjusted
     if nrRes != def_nrRes:
         adj_nrRes = True
-    if maxIt != def_maxIt:
-        adj_maxIt = True
+    if penalty != def_penalty:
+        adj_penalty = True
     if nrSamples!= def_nrSamples:
         adj_nrSamples = True
 
@@ -70,10 +71,10 @@ def AdjustParameters(par_path, nrRes=3, maxIt=500, nrSamples=4096):
                 #Adjust it in the file
                 par_file[line_nr] = line                                
         
-        # The same as nrRes but now for maxIt
-        if adj_maxIt == True:
-            if "MaximumNumberOfIterations" in line:
-                line = line.replace(str(def_maxIt), str(maxIt))  
+        # adjust penalty term
+        if adj_penalty == True:
+            if "Metric1Weight" in line:
+                line = line.replace(str(def_penalty), str(penalty))  
                 par_file[line_nr] = line                                
         
         # The same as nrRes but now for nrSamples
@@ -97,6 +98,37 @@ def AdjustParameters(par_path, nrRes=3, maxIt=500, nrSamples=4096):
     # The function has finished
     print("Parameter file adjusted")
     return adj_par_path
+
+
+def bestPenalty(penalty_w, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter_file_path):
+    """ penalty_w is a list with the penalty weights you want to test as integers. It automatically first adjusts the 
+    parameter file to the wanted penalty weight, then registrates with that parameter file and lastly calculates the mutual
+    information value for that registration. The function returns the best resolution value for this patient.
+    """
+    MI_values = np.zeros(len(penalty_w))
+    for idx in range(len(penalty_w)):
+        PW = penalty_w[idx]
+        # Adjust the penalty weight  
+        adj_par_path = AdjustParameters(parameter_file_path, penalty=PW)
+        # Registrate with the adjusted parameter file
+        dir_res = Registration(fixed_path, moving_path,adj_par_path, ELASTIX_PATH, pnr)
+    
+        # Load the fixed and registrated atlas image
+        itk_image = sitk.ReadImage(os.path.join(dir_res, 'result.0.mhd'))
+        image_array_s = sitk.GetArrayFromImage(itk_image)
+        f_image = sitk.ReadImage(fixed_path)
+        fixed_image_s = sitk.GetArrayFromImage(f_image)
+    
+        # Calculate the mutual information value
+        MI_value = mutual_information(fixed_image_s, image_array_s)
+        MI_values[idx] = MI_value
+
+    # Pick the penalty weight with the highest MI_value
+    idx_max = np.argmax(MI_values)
+    print("idx_max = ", idx_max)
+    best_penalty = penalty_w[idx_max]
+    print(MI_values)
+    return best_penalty
 
 def bestResolution(ResValues, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter_file_path):
     """ ResValues is a list with the resolution values you want to test as integers. It automatically first adjusts the 
