@@ -13,7 +13,8 @@ import os
 
 dir_res = 'E:/CSMIA/resultstest5/'
 moving_image_path = 'E:/CSMIA/NormData/norm_img_1.mhd'
-atlas_segm_path = 'E:/CSMIA/TrainingData/p102/prostaat.mhd'
+atlas_segm_path = 'E:/CSMIA/TrainingData/p109/prostaat.mhd'
+ground_truth_path = 'E:/CSMIA/TrainingData/p108/prostaat.mhd'
 
 def apply_transform(dir_res, moving_image_path, atlas_segm_path):
     TRANSFORMIX_PATH = os.path.join(r'transformix.exe')
@@ -42,11 +43,23 @@ def apply_transform(dir_res, moving_image_path, atlas_segm_path):
     #apply deformation
     segm_img = segm_at*deform_field
     #remove 4th axis
-    segm_img = segm_img.mean(axis=-1)
+    segm_img = segm_img[:,:,:,0]
     
     return segm_img
 
 segm_img = apply_transform(dir_res, moving_image_path, atlas_segm_path)
-plt.figure()
-plt.imshow(segm_img[20], cmap='gray')
+segm_img[segm_img != 0] = 1
+
+orig = imageio.imread(atlas_segm_path)
+gt = imageio.imread(ground_truth_path)
+
+f, (ax0, ax1, ax2) = plt.subplots(1, 3)
+
+ax0.imshow(orig[20], cmap='gray')
+ax0.set_title('Original (atlas) mask')
+ax1.imshow(segm_img[20], cmap='gray')
+ax1.set_title('Transformed (atlas) mask')
+ax2.imshow(gt[20], cmap='gray')
+ax2.set_title('Ground Truth')
+
 
