@@ -24,11 +24,11 @@ def calculate_sensitivity_specificity(y_test, y_pred_test):
     false_neg = (y_pred_test == 0) & (actual_pos)
 
     # Calculate accuracy
-    accuracy = np.mean(y_pred_test == y_test)
+    accuracy = (np.sum(true_pos)+np.sum(true_neg))/(np.sum(true_neg)+np.sum(true_pos)+np.sum(false_neg)+np.sum(false_pos))
 
     # Calculate sensitivity and specificity
-    sensitivity = np.sum(true_pos) / np.sum(actual_pos)
-    specificity = np.sum(true_neg) / np.sum(actual_neg)
+    sensitivity = np.sum(true_pos) / (np.sum(true_pos)+np.sum(false_neg))
+    specificity = np.sum(true_neg) / (np.sum(true_neg)+np.sum(false_pos))
 
     return sensitivity, specificity, accuracy
 
