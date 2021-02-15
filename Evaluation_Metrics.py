@@ -8,8 +8,6 @@ import SimpleITK as sitk
 import imageio
 #import tensorflow as tf
 
-#Deze code werkt nog niet 100%, sesnsitivity is nan omdat er geen true positives zijn gedefineerd
-
 def calculate_sensitivity_specificity(y_test, y_pred):
     # Note: More parameters are defined than necessary.
     # This would allow return of other measures other than sensitivity and specificity
@@ -33,7 +31,7 @@ def calculate_sensitivity_specificity(y_test, y_pred):
     sum_false_neg = np.sum(false_neg)
     sensitivity = np.sum(true_pos) / (sum_false_neg+ sum_true_pos)
     specificity = np.sum(true_neg) / (np.sum(true_neg)+np.sum(false_pos))
-    print(np.sum(true_pos), np.sum(true_neg), np.sum(false_pos), np.sum(false_neg))
+    print('TP=',np.sum(true_pos), ',TN =',np.sum(true_neg), ',FP=',np.sum(false_pos), ',FN=', np.sum(false_neg))
     return sensitivity, specificity, accuracy
 
 def dice(pred, true, k = 1):
@@ -42,10 +40,19 @@ def dice(pred, true, k = 1):
     return dice
 
 # test data
-PATH_True = os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\TrainingData\TrainingData\p102\mr_bffe.mhd')
-PATH_PREDICTED =os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\TrainingData\TrainingData\p102\mr_bffe.mhd')
-TRUE_im = imageio.imread(PATH_True)
-PREDICTED_im = imageio.imread(PATH_PREDICTED)
+PATH_True = os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\TrainingData\TrainingData\p102\prostaat.mhd')
+PATH_PREDICTED =os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\TrainingData\TrainingData\p102\prostaat.mhd')
+TRUE_im = sitk.ReadImage(PATH_True)[:,:,20]
+TRUE_im = sitk.GetArrayFromImage(TRUE_im)
+PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)[:,:,20]
+PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)
+
+fig, ax = plt.subplots(1, 2, figsize=(20, 5))
+ax[0].imshow(TRUE_im, cmap='gray')
+ax[0].set_title('True')
+ax[1].imshow(PREDICTED_im, cmap='gray')
+ax[1].set_title('Predicted')
+plt.show()
 
 y_test = TRUE_im
 y_pred = PREDICTED_im
