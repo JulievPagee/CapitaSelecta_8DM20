@@ -47,6 +47,13 @@ moving_path = Atlas_images_paths[0]
 # all training images are tested at one atlas:
 for p_idx, pnr in enumerate(pnr_list):
     fixed_path = Training_images_paths[p_idx] 
+    
+    # Determine the best initialization step
+    best_initialization = np.zeros(len(pnr_list))
+    for idx in range(len(pnr_list)):
+        pnr = pnr_list[idx]
+        best_initialization[idx] = bestInitialization(I_methods, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter_file_path)
+    print(best_initialization)
 
     # Determine the best weight of penalty term with one atlas on all 7 train images
     best_penalty_weight = np.zeros(len(pnr_list), dtype=float)
@@ -70,9 +77,10 @@ for p_idx, pnr in enumerate(pnr_list):
 # To DO: Make txt file with best parameters
 parameter_resultfile = open('output_file.txt', 'w+')
 l_explain = ('This file shows the optimal parameters, which leads to the best registration (highest value for Mutual Information.\n')
+l_init = ('The optimal initialization method before nonrigid registration is {} \n'.format(best_initialization))
 l_penalty = ('The optimal weight for the penalty term to use is {} \n'.format(best_penalty_weight))
 l_resolution = ('For optimal resolution, use  NumberOfResolutions: {} \n'.format(best_res_patient))
-Lines = [l_explain, l_penalty, l_resolution]
+Lines = [l_explain, l_init, l_penalty, l_resolution]
 parameter_resultfile.writelines(Lines)
 
 

@@ -1,0 +1,5 @@
+- Kopieer map Codes_Def naar je eigen bestanden
+- Zet map TrainData in de map Codes_Def
+- Run het programma 'norm_p_img_data_distribution'. Nu wordt map NormData gemaakt, die in de map Codes_def moet komen.
+- Run het programma 'parameter_optimization' --> dit programma gebruikt functies die in 'Reg_functions' staan.
+

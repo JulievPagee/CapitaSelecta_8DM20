@@ -1,0 +1,99 @@
+
+(FixedInternalImagePixelType "float")
+(MovingInternalImagePixelType "float")
+
+(FixedImageDimension 3)
+(MovingImageDimension 3)
+
+(UseDirectionCosines "true")
+
+//************ Main Components ******************************************
+(Registration "MultiResolutionRegistration")
+(Interpolator "BSplineInterpolator")
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+
+(Optimizer "AdaptiveStochasticGradientDescent")
+(Transform "AffineTransform")
+(Metric "AdvancedMattesMutualInformation")
+
+//******** Transformation ***************************************************
+
+(AutomaticScalesEstimation "true")
+(AutomaticTransformInitialization "true")
+(HowToCombineTransforms "Compose")
+
+//******* Similarity Measure **********************************************
+
+(NumberOfHistogramBins 32)
+(ErodeMask "false")
+
+//**************** Multiresolution **************************************
+(NumberOfResolutions 2)
+
+
+//****** Optimizer ****************************************************
+
+(MaximumNumberOfIterations 500)
+(MaximumStepLength 1)
+
+
+//*******************Interpolation and resampling ****************************
+(NewSamplesEveryIteration "true")
+(ImageSampler "Random")
+
+(BSplineInterpolationOrder 2)
+//(BSplineTransformSplineOrder 3)
+(FinalBSplineInterpolationOrder 3)
+
+
+(DefaultPixelValue 0)
+
+
+(WriteResultImage "true")
+(ResultImagePixelType "float")
+(ResultImageFormat "mhd")
+
+//(FixedImagePyramid "FixedSmoothingImagePyramid")
+//(MovingImagePyramid "MovingSmoothingImagePyramid")
+
+//(AutomaticTransformInitializationMethod "CenterOfGravity")
+
+//(NumberOfSpatialSamples 4096)
+//(NewSamplesEveryIteration "true")
+//(ImageSampler "Random")
+//(UseRandomSampleRegion "false")
+//(SampleRegionSize 50 50)
+
+
+//(MaximumNumberOfSamplingAttempts 1000)
+//(RequiredRatioOfValidSamples 0.010000)
+//(BSplineTransformSplineOrder 2)
+//(UseCyclicTransform "false")
+//(ShowExactMetricValue "false")
+//(CheckNumberOfSamples "true")
+//(UseRelativeWeights "false")
+//(NumberOfFixedHistogramBins 32)
+//(NumberOfMovingHistogramBins 32)
+//(FixedLimitRangeRatio 0.01)
+//(MovingLimitRangeRatio 0.01)
+//(FixedKernelBSplineOrder 0)
+//(MovingKernelBSplineOrder 3)
+(UseFastAndLowMemoryVersion "true")
+//(UseJacobianPreconditioning "false")
+//(FiniteDifferenceDerivative "false")
+//(SP_A 20)
+//(SigmoidInitialTime 0)
+//(MaxBandCovSize 192)
+//(NumberOfBandStructureSamples 10)
+//(UseAdaptiveStepSizes "true")
+//(AutomaticParameterEstimation "true")
+
+//(NumberOfGradientMeasurements 0)
+//(NumberOfJacobianMeasurements 2450)
+//(NumberOfSamplesForExactGradient 100000)
+//(SigmoidScaleFactor 0.1)
+//(ASGDParameterEstimationMethod "Original")
+//(Interpolator "BSplineInterpolator")
+
+
