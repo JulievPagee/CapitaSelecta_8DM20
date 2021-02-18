@@ -10,7 +10,7 @@ import os
 import SimpleITK as sitk
 
 #load data
-DATA_DIR = 'TrainingData' # adjust to your path of TrainingData
+DATA_DIR = 'C:/Users/20175722/Documents/Master jaar 1/Kwartiel 3/8DM20 - CS/Group project/TrainingData' # adjust to your path of TrainingData
 SAVE_FOLD = 'NormData/'
 SAVE_FOLD_V = 'NormData/Validation/'
 SAVE_FOLD_T = 'NormData/Train/'

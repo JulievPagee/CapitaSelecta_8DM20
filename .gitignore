@@ -3,3 +3,5 @@
 # Ignore the normalized data directory and the results folder
 NormData/
 Results/
+.vscode/
+Codes_def/__pycache__/

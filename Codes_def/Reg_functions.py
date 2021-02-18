@@ -3,11 +3,18 @@ import elastix
 import os
 import numpy as np
 import SimpleITK as sitk
+import sys # only necessary for changing the directory to where the python script is (line )
+sys.path.append('.')
+sys.path.append('../NormData')
 
 
 def Registration(fixed_image_path, atlas_path, parameter_path, ELASTIX_PATH, pnr ):
     "Function to registrate one atlas on one fixed image. pnr should be given as 'p102'"
     
+    # Make a results folder if non exists (in Codes_def folder)
+    if os.path.exists('Results') is False:
+        os.mkdir('Results')
+
     # Make a results directory if non exists
     if os.path.exists('Results/results_{}'.format(pnr)) is False:
         os.mkdir('Results/results_{}'.format(pnr))
@@ -171,6 +178,11 @@ def bestInitialization(methods, pnr, ELASTIX_PATH, fixed_path, moving_path_i, pa
         # Registrate with nonrigid BSpline transform (actual registration)
         parameter_path = '{}/parameters.txt'.format(parameter_file_dir)
         
+        # IVANA: changing the working directory where the python file is (comment out if it errors for you)
+        #os.chdir(os.path.dirname(sys.argv[0]))
+        #print("fixed path best initialization:", fixed_path)
+        
+        # Continue Bspline registration and load the images
         dir_res = Registration(fixed_path, moving_path, parameter_path, ELASTIX_PATH, pnr)
         f_image = sitk.ReadImage(fixed_path)
         fixed_image_s = sitk.GetArrayFromImage(f_image)
@@ -190,7 +202,7 @@ def bestInitialization(methods, pnr, ELASTIX_PATH, fixed_path, moving_path_i, pa
         
 def bestFinestResolution(FR_values, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter_file_path):
     """
-    This function determines which finest resolution gives the best registration, in order to optimize paramters. 
+    This function determines which finest resolution gives the best registration, in order to optimize parameters. 
 
     Returns
     -------
@@ -227,7 +239,7 @@ def bestFinestResolution(FR_values, pnr, ELASTIX_PATH, fixed_path, moving_path, 
 def bestPenalty(penalty_w, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter_file_path):
     """ penalty_w is a list with the penalty weights you want to test as integers. It automatically first adjusts the 
     parameter file to the wanted penalty weight, then registrates with that parameter file and lastly calculates the mutual
-    information value for that registration. The function returns the best resolution value for this patient.
+    information value for that registration. The function returns the index of the best penalty value for this patient.
     """
     MI_values = np.zeros(len(penalty_w))
     for idx in range(len(penalty_w)):
@@ -247,12 +259,12 @@ def bestPenalty(penalty_w, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter
         MI_value = mutual_information(fixed_image_s, image_array_s)
         MI_values[idx] = MI_value
 
-    # Pick the penalty weight with the highest MI_value
-    idx_max = np.argmax(MI_values)
-    print("idx_max = ", idx_max)
-    best_penalty = penalty_w[idx_max]
+    # Pick the index of the penalty weight with the highest MI_value
+    best_penalty_idx = np.argmax(MI_values)
+    print("idx_max = ", best_penalty_idx)
+    #best_penalty = penalty_w[idx_max]
     print(MI_values)
-    return best_penalty
+    return best_penalty_idx
 
 def bestResolution(ResValues, pnr, ELASTIX_PATH, fixed_path, moving_path, parameter_file_path):
     """ ResValues is a list with the resolution values you want to test as integers. It automatically first adjusts the 
