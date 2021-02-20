@@ -10,7 +10,7 @@
 (MovingImagePyramid "MovingSmoothingImagePyramid")
 (Transform "BSplineTransform")
 (NumberOfResolutions 3)
-(FinalGridSpacingInPhysicalUnits 8.0)
+(FinalGridSpacingInPhysicalUnits 64.0)
 
 
 

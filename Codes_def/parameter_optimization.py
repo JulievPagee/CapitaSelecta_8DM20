@@ -52,22 +52,22 @@ parameter_file_dir = 'Codes_def/Parameter_files'
 parameter_file_path = 'Codes_def/Parameter_files/parameters.txt'
 
 # Initialization methods to be tested
-I_methods = ['none','rigid'] #['none', 'rigid', 'affine', 'rigid_affine']
+I_methods = ['none', 'rigid', 'affine', 'rigid_affine']
 
 # Test to adjust penalty term with weights 0.005 to 5
-penalty_weights = [0.005,0.5] #[0.005, 0.05, 0.5, 5]
+penalty_weights = [0.005, 0.05, 0.5, 5]
 
 # Test to adjust the parameter file with resolutions 1 to 6
-ResValues = [1,2] #[1,2,3,4,5,6]
+ResValues = [1,2,3,4,5,6]
 
 # Test to adjust parameter file with finest resolution values 4-64
-FR_values = [4,8] #[4, 8, 16, 32, 64]
+FR_values = [4, 8, 16, 32, 64]
 
 # define list with patients to be tested (train data) = fixed images
 random.shuffle(Training_labels) #shuffle the training list
-pnr_list = Training_labels[0:2] # you can select a few training images here if you like
+pnr_list = Training_labels[0:6] # you can select a few training images here if you like
 
-atlas_selection = Atlas_labels[0] # give here selection of atlasses used if you want
+atlas_selection = Training_labels[-1] # give here selection of atlasses used if you want
 
 # HERE all training images are tested at one atlas ([0] FOR NOW):
 # moving image = atlas image normally, but HERE it is a training image ONLY for parameter optimization
