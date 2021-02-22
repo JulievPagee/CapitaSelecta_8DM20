@@ -110,3 +110,16 @@ gt_seg = torch.from_numpy(gt_seg).permute(1,2,0)
 
 # Plot with scroll function (does not work for some reason)
 plot_segm(atlas_seg, pred_seg, gt_seg)
+
+# Evaluation
+#gt_seg and pred_seg are renamed to get a clear interpretation about test en predicted
+y_test = gt_seg
+y_pred = pred_seg
+
+sensitivity, specificity, accuracy = calculate_sensitivity_specificity(y_test, y_pred)
+dice = dice(y_pred, y_test)
+print ('Sensitivity:', sensitivity)
+print ('Specificity:', specificity)
+print ('Accuracy:', accuracy)
+print('Dice:', dice)
+
