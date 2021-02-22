@@ -23,15 +23,17 @@ def calculate_sensitivity_specificity(y_test, y_pred):
     true_neg = (y_pred == 0) & (actual_neg)
     false_neg = (y_pred == 0) & (actual_pos)
 
-     # Calculate accuracy
-    accuracy = (np.sum(true_pos)+np.sum(true_neg))/(np.sum(true_neg)+np.sum(true_pos)+np.sum(false_neg)+np.sum(false_pos))
-
-   # Calculate sensitivity and specificity
+    # Calculate sensitivity and specificity
     sum_true_pos = np.sum(true_pos)
     sum_false_neg = np.sum(false_neg)
     sensitivity = np.sum(true_pos) / (sum_false_neg+ sum_true_pos)
     specificity = np.sum(true_neg) / (np.sum(true_neg)+np.sum(false_pos))
     print('TP=',np.sum(true_pos), ',TN =',np.sum(true_neg), ',FP=',np.sum(false_pos), ',FN=', np.sum(false_neg))
+
+    # Calculate accuracy
+    accuracy = (np.sum(true_pos) + np.sum(true_neg)) / (
+                np.sum(true_neg) + np.sum(true_pos) + np.sum(false_neg) + np.sum(false_pos))
+
     return sensitivity, specificity, accuracy
 
 def dice(pred, true, k = 1):
@@ -47,12 +49,12 @@ TRUE_im = sitk.GetArrayFromImage(TRUE_im)
 PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)[:,:,20]
 PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)
 
-fig, ax = plt.subplots(1, 2, figsize=(20, 5))
-ax[0].imshow(TRUE_im, cmap='gray')
-ax[0].set_title('True')
-ax[1].imshow(PREDICTED_im, cmap='gray')
-ax[1].set_title('Predicted')
-plt.show()
+#fig, ax = plt.subplots(1, 2, figsize=(20, 5))
+#ax[0].imshow(TRUE_im, cmap='gray')
+#ax[0].set_title('True')
+#ax[1].imshow(PREDICTED_im, cmap='gray')
+#ax[1].set_title('Predicted')
+#plt.show()
 
 y_test = TRUE_im
 y_pred = PREDICTED_im
