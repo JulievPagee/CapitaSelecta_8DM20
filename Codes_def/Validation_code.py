@@ -79,7 +79,7 @@ for val_idx in range(len(val_data)):
     if os.path.exists(dir_res) is False:
             os.mkdir(dir_res)
     #apply the transformation to the mask of the best atlas
-    segm_img, transformed_atlas_path = deform_func(results_dir, pnr, atlas_seg_path, t_atlasses[idx], dir_res, TRANSFORMIX_PATH)
+    atlas_seg_path, transformed_atlas_path = deform_func(results_dir, pnr, segm_img, t_atlasses[idx], dir_res, TRANSFORMIX_PATH)
     
     #store the transformed mask and path for further use
     segm_images.append(segm_img)
