@@ -3,7 +3,7 @@
 - Run het programma 'norm_p_img_data_distribution'. Nu wordt map NormData gemaakt, die in de map Codes_def moet komen.
 - Run het programma 'parameter_optimization' --> dit programma gebruikt functies die in 'Reg_functions' staan.
 
-Voor segmentatie validatie afbeeldingen
-- Validation_code.py (paths aanpassen het gebied tussen de ############### en bij visualizatie stap)
-- Validation_utilities.py (alleen de B-spline registratie parameter file kan nog een andere naam hebben als we de optimale parameters hebben) 
+Voor segmentatie validatie afbeeldingen:
+- Run het programma Validation_code.py (paths aanpassen in het gebied tussen de ############### en bij visualizatie stap, maakt gebruik van functies in Validation_utilities.py)
+(- Validation_utilities.py (hoeft officieel niets in aangepast te worden alleen de B-spline registratie parameter file kan nog een andere naam hebben als we de optimale parameters hebben)) 
 
