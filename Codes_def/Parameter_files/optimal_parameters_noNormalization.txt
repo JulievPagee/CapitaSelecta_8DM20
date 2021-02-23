@@ -1,0 +1,5 @@
+This file shows the optimal parameters, which leads to the best registration (highest value for Mutual Information).
+The optimal initialization method before nonrigid registration is rigid 
+The optimal weight for the penalty term to use is 0.005 
+For optimal resolution, use  NumberOfResolutions: 4 
+For optimal resolution, use Finest resolution value: 4 
