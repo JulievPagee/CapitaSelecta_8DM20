@@ -7,6 +7,3 @@ Voor segmentatie validatie afbeeldingen
 - deform_func.py (hoef je niets aan te veranderen)
 - deform_code.py (paths aanpassen het gebied tussen de ###############)
 
-Voor de evaluatie:
-Laad de juiste paths in, en run de code.
-Veel errors worden veroorzaakt doordat TP of TN gelijk aan 0 zijn, houd hier rekening mee!
