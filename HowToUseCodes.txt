@@ -4,6 +4,6 @@
 - Run het programma 'parameter_optimization' --> dit programma gebruikt functies die in 'Reg_functions' staan.
 
 Voor segmentatie validatie afbeeldingen
-- deform_func.py (hoef je niets aan te veranderen)
-- deform_code.py (paths aanpassen het gebied tussen de ###############)
+- Validation_code.py (paths aanpassen het gebied tussen de ############### en bij visualizatie stap)
+- Validation_utilities.py (alleen de B-spline registratie parameter file kan nog een andere naam hebben als we de optimale parameters hebben) 
 
