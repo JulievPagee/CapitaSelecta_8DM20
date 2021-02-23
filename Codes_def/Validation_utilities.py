@@ -110,7 +110,7 @@ def registration_func(pnr, anr, dir_res, ELASTIX_PATH, fixed_path, moving_path_i
     moving_path_r = '{}/result.0.mhd'.format(dir_res_init_reg)
     
     # Registrate with nonrigid BSpline transform (actual registration)
-    parameter_path = '{}/parameters.txt'.format(parameter_file_dir)
+    parameter_path = '{}/parameters_FINAL.txt'.format(parameter_file_dir)
     
     # Continue Bspline registration and load the images
     dir_res = Registration(dir_res, fixed_path, moving_path_r, parameter_path, ELASTIX_PATH, pnr, anr, 'B_spline', True)
@@ -243,35 +243,3 @@ def plot_segm(atlas_seg, pred_seg, gt_seg):
         fig.canvas.mpl_connect('scroll_event', tracker.onscroll)
         plt.show()
 
-def calculate_sensitivity_specificity(y_test, y_pred):
-    # Note: More parameters are defined than necessary.
-    # This would allow return of other measures other than sensitivity and specificity
-    # NOTE: reference: https://pythonhealthcare.org/tag/specificity/
-
-    # Get true/false for whether a breach actually occurred
-    actual_pos = y_test == 1
-    actual_neg = y_test == 0
-
-    # Get true and false test (true test match actual, false tests differ from actual)
-    true_pos = (y_pred == 1) & (actual_pos)
-    false_pos = (y_pred == 1) & (actual_neg)
-    true_neg = (y_pred == 0) & (actual_neg)
-    false_neg = (y_pred == 0) & (actual_pos)
-
-    # Calculate sensitivity and specificity
-    sum_true_pos = np.sum(true_pos)
-    sum_false_neg = np.sum(false_neg)
-    sensitivity = np.sum(true_pos) / (sum_false_neg+ sum_true_pos)
-    specificity = np.sum(true_neg) / (np.sum(true_neg)+np.sum(false_pos))
-    print('TP=',np.sum(true_pos), ',TN =',np.sum(true_neg), ',FP=',np.sum(false_pos), ',FN=', np.sum(false_neg))
-
-    # Calculate accuracy
-    accuracy = (np.sum(true_pos) + np.sum(true_neg)) / (
-                np.sum(true_neg) + np.sum(true_pos) + np.sum(false_neg) + np.sum(false_pos))
-
-    return sensitivity, specificity, accuracy
-
-def dice(pred, true, k = 1):
-    intersection = np.sum(pred[true==k]) * 2.0
-    dice = intersection / (np.sum(pred) + np.sum(true))
-    return dice
