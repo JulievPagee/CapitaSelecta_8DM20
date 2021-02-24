@@ -1,0 +1,48 @@
+p119, vergelijking mask(Gekregen) met b_spline_mask(zelf gegenereerd) (alle slices meegenomen) 
+TP= 275107 ,TN = 7365689 ,FP= 61318 ,FN= 58784
+Sensitivity: 0.8239425441236811
+Specificity: 0.9917439151464379
+Accuracy: 0.98452472896822
+Dice: 0.8208277886847397
+
+
+Slices helemaal zwart buiten beschouwing gelaten : tot slice 9
+TP= 223746 ,TN = 6623955 ,FP= 80925 ,FN= 20085
+Sensitivity: 0.9176273730575686
+Specificity: 0.9879304327594229
+Accuracy: 0.9854634909985464
+Dice: 0.815843880241093
+
+p125.
+vergelijking mask(Gekregen) met b_spline_mask(zelf gegenereerd) (alle slices meegenomen) 
+TP= 223746 ,TN = 7436142 ,FP= 80925 ,FN= 20085
+Sensitivity: 0.9176273730575686
+Specificity: 0.989234497976405
+Accuracy: 0.9869847535684659
+Dice: 0.815843880241093
+
+
+Slices helemaal zwart buiten beschouwing gelaten :tot slice 19
+TP= 223746 ,TN = 5721525 ,FP= 80925 ,FN= 20085
+Sensitivity: 0.9176273730575686
+Specificity: 0.9860533050694104
+Accuracy: 0.9832938627893741
+Dice: 0.815843880241093
+
+
+p133,
+
+vergelijking mask(Gekregen) met b_spline_mask(zelf gegenereerd) (alle slices meegenomen) 
+TP= 192408 ,TN = 7475508 ,FP= 42796 ,FN= 50186
+Sensitivity: 0.7931276123894243
+Specificity: 0.9943077587711271
+Accuracy: 0.9880191699465706
+Dice: 0.8053947484083231
+
+
+Slices helemaal zwart buiten beschouwing gelaten :tot slice 13/ vanaf 81 buiten beschouwing
+TP= 192408 ,TN = 5772551 ,FP= 31136 ,FN= 50186
+Sensitivity: 0.7931276123894243
+Specificity: 0.9946351345274134
+Accuracy: 0.9865500792966784
+Dice: 0.8255409342297775

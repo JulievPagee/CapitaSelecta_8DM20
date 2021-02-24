@@ -41,20 +41,15 @@ def dice(pred, true, k = 1):
     dice = intersection / (np.sum(pred) + np.sum(true))
     return dice
 
-# test data
-PATH_True = os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\TrainingData\TrainingData\p102\prostaat.mhd')
-PATH_PREDICTED =os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\TrainingData\TrainingData\p102\prostaat.mhd')
-TRUE_im = sitk.ReadImage(PATH_True)[:,:,20]
-TRUE_im = sitk.GetArrayFromImage(TRUE_im)
-PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)[:,:,20]
-PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)
 
-#fig, ax = plt.subplots(1, 2, figsize=(20, 5))
-#ax[0].imshow(TRUE_im, cmap='gray')
-#ax[0].set_title('True')
-#ax[1].imshow(PREDICTED_im, cmap='gray')
-#ax[1].set_title('Predicted')
-#plt.show()
+
+# test data
+PATH_True = os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\Codes_def\TrainingData\p133\prostaat.mhd')
+PATH_PREDICTED =os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\Codes_def\Results_atl_FINAL\transform_p133\Transformed_masks\mask_B_spline_p133\result.mhd')
+TRUE_im = sitk.ReadImage(PATH_True)[:,:,:]
+TRUE_im = sitk.GetArrayFromImage(TRUE_im)
+PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)[:,:,:]
+PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)
 
 y_test = TRUE_im
 y_pred = PREDICTED_im
@@ -65,3 +60,13 @@ print ('Sensitivity:', sensitivity)
 print ('Specificity:', specificity)
 print ('Accuracy:', accuracy)
 print('Dice:', dice)
+
+
+fig, ax = plt.subplots(1, 2, figsize=(20, 5))
+ax[0].imshow(TRUE_im, cmap='gray')
+ax[0].set_title('True')
+ax[1].imshow(PREDICTED_im, cmap='gray')
+ax[1].set_title('Predicted')
+plt.show()
+
+
