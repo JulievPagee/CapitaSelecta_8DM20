@@ -13,6 +13,13 @@ Specificity: 0.9879304327594229
 Accuracy: 0.9854634909985464
 Dice: 0.815843880241093
 
+Gecropt naar size (86, 173, 191)
+TP= 275107 ,TN = 2446489 ,FP= 61318 ,FN= 58784
+Sensitivity: 0.8239425441236811
+Specificity: 0.9755491550984585
+Accuracy: 0.957735832590233
+Dice: 0.8208277886847397
+
 p125.
 vergelijking mask(Gekregen) met b_spline_mask(zelf gegenereerd) (alle slices meegenomen) 
 TP= 223746 ,TN = 7436142 ,FP= 80925 ,FN= 20085
@@ -30,6 +37,13 @@ Accuracy: 0.9832938627893741
 Dice: 0.815843880241093
 
 
+Gecropt naar size (86, 173, 191)
+TP= 223746 ,TN = 2516942 ,FP= 80925 ,FN= 20085
+Sensitivity: 0.9176273730575686
+Specificity: 0.9688494445635593
+Accuracy: 0.9644543508845768
+Dice: 0.815843880241093
+
 p133,
 
 vergelijking mask(Gekregen) met b_spline_mask(zelf gegenereerd) (alle slices meegenomen) 
@@ -46,3 +60,11 @@ Sensitivity: 0.7931276123894243
 Specificity: 0.9946351345274134
 Accuracy: 0.9865500792966784
 Dice: 0.8255409342297775
+
+
+Gecropt naar size (86, 173, 191)
+TP= 192408 ,TN = 2556308 ,FP= 42796 ,FN= 50186
+Sensitivity: 0.7931276123894243
+Specificity: 0.9835343256753096
+Accuracy: 0.9672794223735246
+Dice: 0.8053947484083231
