@@ -20,6 +20,20 @@ Specificity: 0.9755491550984585
 Accuracy: 0.957735832590233
 Dice: 0.8208277886847397
 
+Normalisatie met min max & gecropt naar size (86, 173, 191)
+TP= 244656 ,TN = 2459696 ,FP= 48111 ,FN= 89235
+Sensitivity: 0.732742122429176
+Specificity: 0.9808155093274722
+Accuracy: 0.9516676297059012
+Dice: 0.7808278199592122
+
+Normalisatie met mean std & gecropt naar size (86, 173, 191)
+TP= 259644 ,TN = 2439115 ,FP= 68692 ,FN= 74247
+Sensitivity: 0.7776310232980224
+Specificity: 0.9726087374347387
+Accuracy: 0.9496994402642364
+Dice: 0.7841540740561771
+
 p125.
 vergelijking mask(Gekregen) met b_spline_mask(zelf gegenereerd) (alle slices meegenomen) 
 TP= 223746 ,TN = 7436142 ,FP= 80925 ,FN= 20085
@@ -43,6 +57,20 @@ Sensitivity: 0.9176273730575686
 Specificity: 0.9688494445635593
 Accuracy: 0.9644543508845768
 Dice: 0.815843880241093
+
+Normalisatie met min max & gecropt naar size (86, 173, 191)
+TP= 226350 ,TN = 2497201 ,FP= 100666 ,FN= 17481
+Sensitivity: 0.9283069010913296
+Specificity: 0.961250518213596
+Accuracy: 0.9584238015440064
+Dice: 0.7930321084283529
+
+Normalisatie met mean std & gecropt naar size (86, 173, 191)
+TP= 215650 ,TN = 2467324 ,FP= 130543 ,FN= 28181
+Sensitivity: 0.8844240478036016
+Specificity: 0.9497499294613619
+Accuracy: 0.944144662803718
+Dice: 0.7309872140794272
 
 p133,
 
@@ -68,3 +96,17 @@ Sensitivity: 0.7931276123894243
 Specificity: 0.9835343256753096
 Accuracy: 0.9672794223735246
 Dice: 0.8053947484083231
+
+Normalisatie met min max & gecropt naar size (86, 173, 191)
+TP= 198718 ,TN = 2551106 ,FP= 47998 ,FN= 43876
+Sensitivity: 0.8191381485115048
+Specificity: 0.9815328667109896
+Accuracy: 0.9676693300977092
+Dice: 0.8122376407594367
+
+Normalisatie met mean std & gecropt naar size (86, 173, 191)
+TP= 181680 ,TN = 2554534 ,FP= 44570 ,FN= 60914
+Sensitivity: 0.7489055788683974
+Specificity: 0.9828517827682155
+Accuracy: 0.9628799400921562
+Dice: 0.7750125841431265
