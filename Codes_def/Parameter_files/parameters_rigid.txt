@@ -1,97 +1,62 @@
+//This file contains the parameter setting for rigid registration.
+//Rigid registration is used as initialization method before B-Spline registration. 
+//This parameters are mainly based on an existing parameter file, this parameter file can be found in: http://elastix.bigr.nl/wiki/images/e/e0/Par0001rigid.txt
+//
 
+//ImageTypes
 (FixedInternalImagePixelType "float")
 (MovingInternalImagePixelType "float")
-
 (FixedImageDimension 3)
 (MovingImageDimension 3)
 
-(UseDirectionCosines "true")
-
-//************ Main Components ******************************************
+//Components
 (Registration "MultiResolutionRegistration")
 (Interpolator "BSplineInterpolator")
+(MaximumStepLength 1)
+(Metric "AdvancedMattesMutualInformation")
+(Optimizer "AdaptiveStochasticGradientDescent")
 (ResampleInterpolator "FinalBSplineInterpolator")
 (Resampler "DefaultResampler")
-
-(Optimizer "AdaptiveStochasticGradientDescent")
 (Transform "EulerTransform")
-(Metric "AdvancedMattesMutualInformation")
 
-//******** Transformation ***************************************************
+(ErodeMask "false")
 
 (AutomaticScalesEstimation "true")
 (AutomaticTransformInitialization "true")
-(HowToCombineTransforms "Compose")
 
-//******* Similarity Measure **********************************************
-
-(NumberOfHistogramBins 32)
-(ErodeMask "false")
-
-//**************** Multiresolution **************************************
 (NumberOfResolutions 2)
 
-
-//****** Optimizer ****************************************************
-
-(MaximumNumberOfIterations 500)
-(MaximumStepLength 1)
-
-
-//*******************Interpolation and resampling ****************************
-(NewSamplesEveryIteration "true")
-(ImageSampler "Random")
-
-(BSplineInterpolationOrder 2)
-//(BSplineTransformSplineOrder 3)
-(FinalBSplineInterpolationOrder 3)
-(DefaultPixelValue 0)
-
+(HowToCombineTransforms "Compose")
 
 (WriteResultImage "true")
 (ResultImagePixelType "float")
 (ResultImageFormat "mhd")
 
-//(FixedImagePyramid "FixedSmoothingImagePyramid")
-//(MovingImagePyramid "MovingSmoothingImagePyramid")
 
-//(AutomaticTransformInitializationMethod "CenterOfGravity")
-
-//(NumberOfSpatialSamples 4096)
-//(NewSamplesEveryIteration "true")
-//(ImageSampler "Random")
-//(UseRandomSampleRegion "false")
-//(SampleRegionSize 50 50)
+//Maximum number of iterations in each resolution level: 
+(MaximumNumberOfIterations 500)
 
 
-//(MaximumNumberOfSamplingAttempts 1000)
-//(RequiredRatioOfValidSamples 0.010000)
-//(BSplineTransformSplineOrder 2)
-//(UseCyclicTransform "false")
-//(ShowExactMetricValue "false")
-//(CheckNumberOfSamples "true")
-//(UseRelativeWeights "false")
-//(NumberOfFixedHistogramBins 32)
-//(NumberOfMovingHistogramBins 32)
-//(FixedLimitRangeRatio 0.01)
-//(MovingLimitRangeRatio 0.01)
-//(FixedKernelBSplineOrder 0)
-//(MovingKernelBSplineOrder 3)
+//Number of grey level bins in each resolution level:
+(NumberOfHistogramBins 32)
+
+
+//sampler:
+(ImageSampler "Random")
+(NewSamplesEveryIteration "true")
+
+
+//Order of B-Spline interpolation used in each resolution level:
+(BSplineInterpolationOrder 2)
+
+
+//Order of B-Spline interpolation used for applying the final deformation:
+(FinalBSplineInterpolationOrder 3)
+
+
+//Default pixel value for pixels that come from outside picture:
+(DefaultPixelValue 0)
+
+
 (UseFastAndLowMemoryVersion "true")
-//(UseJacobianPreconditioning "false")
-//(FiniteDifferenceDerivative "false")
-//(SP_A 20)
-//(SigmoidInitialTime 0)
-//(MaxBandCovSize 192)
-//(NumberOfBandStructureSamples 10)
-//(UseAdaptiveStepSizes "true")
-//(AutomaticParameterEstimation "true")
-
-//(NumberOfGradientMeasurements 0)
-//(NumberOfJacobianMeasurements 2450)
-//(NumberOfSamplesForExactGradient 100000)
-//(SigmoidScaleFactor 0.1)
-//(ASGDParameterEstimationMethod "Original")
-//(Interpolator "BSplineInterpolator")
-
-
+(UseDirectionCosines "true")

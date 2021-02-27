@@ -1,74 +1,96 @@
+//This parameter file contains the parameter setting for B-Spline registration with Elastix. 
+//These parameters are based on literature or are determined by systematical variation. 
 
+//ImageTypes
 (FixedInternalImagePixelType "float")
 (MovingInternalImagePixelType "float")
-
 (FixedImageDimension 3)
 (MovingImageDimension 3)
 
+//Components
 (Registration "MultiMetricMultiResolutionRegistration")
 (FixedImagePyramid "FixedSmoothingImagePyramid")
 (MovingImagePyramid "MovingSmoothingImagePyramid")
-(Transform "BSplineTransform")
-(NumberOfResolutions 6)
-(FinalGridSpacingInPhysicalUnits 4.0)
-
-
-
 (Interpolator "BSplineInterpolator")
-(BSplineInterpolationOrder 2)
-(BSplineTransformSplineOrder 3)
-(FinalBSplineInterpolationOrder 3)
 
 (Metric "AdvancedMattesMutualInformation" "TransformBendingEnergyPenalty")
 (Metric0Weight 1)
 (Metric1Weight 0.005)
 
+(Optimizer "AdaptiveStochasticGradientDescent")
+(ASGDParameterEstimationMethod "Original")
+(UseAdaptiveStepSizes "true")
+
+(ResampleInterpolator "FinalBSplineInterpolator")
+(Resampler "DefaultResampler")
+(Transform "BSplineTransform")
+(BSplineTransformSplineOrder 3)
+
+
+(AutomaticParameterEstimation "true")
 (AutomaticScalesEstimation "true")
 (AutomaticTransformInitialization "true")
 (AutomaticTransformInitializationMethod "CenterOfGravity")
-(HowToCombineTransforms "Compose")
-(NumberOfHistogramBins 32)
-(Optimizer "AdaptiveStochasticGradientDescent")
-(MaximumNumberOfIterations 500)
-(NumberOfSpatialSamples 4096)
-(NewSamplesEveryIteration "true")
-(ImageSampler "Random")
-(UseRandomSampleRegion "false")
-(SampleRegionSize 50 50)
 
-(DefaultPixelValue 0)
+(NumberOfResolutions 6)
+(FinalGridSpacingInPhysicalUnits 4.0)
+
+(HowToCombineTransforms "Compose")
+
 (WriteResultImage "true")
 (ResultImagePixelType "float")
 (ResultImageFormat "mhd")
-(MaximumNumberOfSamplingAttempts 1000)
-(RequiredRatioOfValidSamples 0.010000)
 
-(UseCyclicTransform "false")
-(ShowExactMetricValue "false")
-(CheckNumberOfSamples "true")
-(UseRelativeWeights "false")
+//Maximum number of iterations in each resolution level: 
+(MaximumNumberOfIterations 500)
+
+//Number of grey level bins in each resolution level:
+(NumberOfHistogramBins 32)
 (NumberOfFixedHistogramBins 32)
 (NumberOfMovingHistogramBins 32)
 (FixedLimitRangeRatio 0.01)
 (MovingLimitRangeRatio 0.01)
 (FixedKernelBSplineOrder 0)
 (MovingKernelBSplineOrder 3)
+
+
+//NUmber of spatial samples used to compute the mutual information in each resolution level:
+(ImageSampler "Random")
+(NumberOfSpatialSamples 4096)
+(UseRandomSampleRegion "false")
+(SampleRegionSize 50 50)
+(CheckNumberOfSamples "true")
+(NewSamplesEveryIteration "true")
+
+//Order of B-Spline interpolation used in each resolution level:
+(BSplineInterpolationOrder 2)
+
+//Order of B-Spline interpolation used for applying the final deformation:
+(FinalBSplineInterpolationOrder 3)
+
+//Default pixel value for pixels that come from outside the picture:
+(DefaultPixelValue 0)
+
+//Additional parameters
+(MaximumNumberOfSamplingAttempts 1000)
+(RequiredRatioOfValidSamples 0.010000)
+
+(UseCyclicTransform "false")
+(ShowExactMetricValue "false")
+(UseRelativeWeights "false")
+
 (UseFastAndLowMemoryVersion "true")
 (UseJacobianPreconditioning "false")
 (FiniteDifferenceDerivative "false")
 (SP_A 20)
 (SigmoidInitialTime 0)
 (MaxBandCovSize 192)
-(NumberOfBandStructureSamples 10)
-(UseAdaptiveStepSizes "true")
-(AutomaticParameterEstimation "true")
+
 (MaximumStepLength 1)
+(NumberOfBandStructureSamples 10)
 (NumberOfGradientMeasurements 0)
 (NumberOfJacobianMeasurements 2450)
 (NumberOfSamplesForExactGradient 100000)
 (SigmoidScaleFactor 0.1)
-(ASGDParameterEstimationMethod "Original")
 (UseDirectionCosines "true")
-(ResampleInterpolator "FinalBSplineInterpolator")
-(Resampler "DefaultResampler")
 
