@@ -104,7 +104,6 @@ def create_binary_pattern(img, p, r):
 
     print ('[INFO] Computing local binary pattern features.')
     lbp = feature.local_binary_pattern(img, p, r)
-    output = (lbp-np.min(lbp))/(np.max(lbp)-np.min(lbp)) * 255
     return (lbp-np.min(lbp))/(np.max(lbp)-np.min(lbp)) * 255
 
 def variance_feature_oud(img):
@@ -115,24 +114,19 @@ def variance_feature_oud(img):
     var = ndimage.variance(img_array, labels=None, index=np.arange(1, nlbl + 1))
     return var
 
-def variance_feature(img):
+def variance_feature(img_grey):
     print('[INFO] Computing variance feature.')
-    varianceMatrix = ndimage.generic_filter(img, np.var, size=1)
-    result = np.mean(varianceMatrix, axis=2)
-    return result
+    varianceMatrix = ndimage.generic_filter(img_grey, np.var, size=1)
+    return varianceMatrix
 
-def gaussian_blur(img, sigma=2):
+def gaussian_blur(img_gray, sigma=2):
     print('[INFO] Computing gaussian blur feature.')
-    img_array = np.array(img)
-    img_blurred = ndimage.gaussian_filter(img_array, sigma=sigma)
-    result = np.mean(img_blurred, axis=2)
-    return result
+    img_blurred = ndimage.gaussian_filter(img_gray, sigma=sigma)
+    return img_blurred
 
-def edges(img):
+def edges(img_grey):
     print('[INFO] Computing edges feature.')
-    img_array = np.array(img)
-    img_array = np.mean(img_array, axis=2)
-    canny = feature.canny(img_array, sigma=3)
+    canny = feature.canny(img_grey, sigma=3)
     return canny
 
 def create_features(img, img_gray, label, train=True):
@@ -146,9 +140,9 @@ def create_features(img, img_gray, label, train=True):
     feature_img = np.zeros((img.shape[0],img.shape[1],7))
     feature_img[:,:,:3] = img
     feature_img[:,:,3] = create_binary_pattern(img_gray, lbp_points, lbp_radius)
-    feature_img[:,:,4] = variance_feature(img)
-    feature_img[:,:,5] = gaussian_blur(img)
-    feature_img[:,:,6] = edges(img)
+    feature_img[:,:,4] = variance_feature(img_gray)
+    feature_img[:,:,5] = gaussian_blur(img_gray)
+    feature_img[:,:,6] = edges(img_gray)
     img = None
     feature_img = feature_img[h_ind:-h_ind, h_ind:-h_ind]
     features = feature_img.reshape(feature_img.shape[0]*feature_img.shape[1], feature_img.shape[2])
