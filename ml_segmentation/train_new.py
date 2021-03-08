@@ -20,7 +20,7 @@ model_savefile = model_name +'.sav'
 output_model = os.path.join(MODEL_SAVE_PATH, model_savefile)                                #specify path to save model
 
 #Classifier properties
-classifier = 'SVM'                                          #options 'SVM', 'RF', 'GBC'
+classifier = 'RF'                                          #options 'SVM', 'RF', 'GBC'
 fr = False                                                  #specify feature reduction True/False (now PCA)
 
 #Creating subset of data
