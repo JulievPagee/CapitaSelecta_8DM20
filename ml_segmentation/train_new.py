@@ -1,5 +1,6 @@
 from train_utilities_new import *
 
+model_name = 'alltrain'
 name = "Nathalie"
 
 if name == "GPU":
@@ -8,9 +9,8 @@ if name == "GPU":
 
 if name == "Nathalie":
     CLASS_DATA_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Codes_def\ClassData'    #Data folder
-    MODEL_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project'                       #Define where the model should be saved
+    MODEL_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Models'                       #Define where the model should be saved
 
-model_name = 'test'
 
 #paths
 image_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled/Slices')                       #path to labelled images

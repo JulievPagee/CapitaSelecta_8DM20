@@ -261,11 +261,12 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
 
     image_list_labelled, label_list_labelled = read_data_labelled(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled)
     image_list_unlabelled = read_data_unlabelled(image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled)
+    print('Feature extraction time in minutes:', (time.time()-start)/60)
     X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled)
     X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
     model = train_model(X_train, y_train, classifier, fr)
     pred = test_model(X_test, y_test, model)
     pkl.dump(model, open(output_model, "wb"))
-    print ('Processing time:',time.time()-start)
+    print ('Processing time in minutes:',(time.time()-start)/60)
     
     return pred
