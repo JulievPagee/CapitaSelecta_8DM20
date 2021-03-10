@@ -53,7 +53,7 @@ def compute_prediction(img, model):
 
     return inference_img
 
-def infer_images(image_dir, model_path, output_dir):
+def infer_images(image_dir, model_path, model_name, output_dir):
 
     filelist = glob(os.path.join(image_dir,'*.png'))
 
@@ -65,10 +65,10 @@ def infer_images(image_dir, model_path, output_dir):
         print ('[INFO] Processing images:', os.path.basename(file))
         inference_img = compute_prediction(cv2.imread(file, 1), model)
         patient_slice = os.path.splitext(os.path.basename(file))[0]
-        image_name = 'mask_' + patient_slice + '.png'
+        image_name = model_name + '_mask_' + patient_slice + '.png'
         cv2.imwrite(os.path.join(output_dir, image_name), inference_img)
 
-def main(image_dir, model_path, output_dir):
+def main(image_dir, model_path, model_name, output_dir):
     start = time.time()
-    infer_images(image_dir, model_path, output_dir)
+    infer_images(image_dir, model_path, model_name, output_dir)
     print("Total time to create masks:", (time.time()-start)/60)
