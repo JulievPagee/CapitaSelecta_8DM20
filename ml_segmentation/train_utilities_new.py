@@ -139,7 +139,6 @@ def create_features(img, img_gray, label, train=True):
     lbp_points = lbp_radius*8
     h_ind = int((h_neigh - 1)/ 2)
     feature_img = np.zeros((img.shape[0],img.shape[1],7))
-    feature_img = np.zeros((img.shape[0], img.shape[1], 4))
     feature_img[:,:,:3] = img
     feature_img[:,:,3] = create_binary_pattern(img_gray, lbp_points, lbp_radius)
     feature_img[:,:,4] = variance_feature(img_gray)
