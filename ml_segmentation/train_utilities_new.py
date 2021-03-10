@@ -134,7 +134,7 @@ def create_features(img, img_gray, label, train=True):
 
     lbp_radius = 24 # local binary pattern neighbourhood
     h_neigh = 11 # haralick neighbourhood
-    num_examples = 1000 # number of examples per image to use for training model
+    num_examples = 90243 # number of examples per image to use for training model
 
     lbp_points = lbp_radius*8
     h_ind = int((h_neigh - 1)/ 2)
@@ -167,7 +167,7 @@ def create_features(img, img_gray, label, train=True):
 
     return features, labels
 
-def create_training_dataset(image_list, label_list):
+def create_training_dataset(image_list, label_list, test=False):
 
     print ('[INFO] Creating training dataset on %d image(s).' %len(image_list))
 
@@ -186,11 +186,16 @@ def create_training_dataset(image_list, label_list):
     y = np.array(y)
     y = y.reshape(y.shape[0]*y.shape[1], y.shape[2]).ravel()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    if test:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        output = [X_train, X_test, y_train, y_test]
+    else:
+        X_train, y_train = X, y
+        output = [X_train, y_train]
 
     print ('[INFO] Feature vector size:', X_train.shape)
 
-    return X_train, X_test, y_train, y_test
+    return output
 
 def create_unlabelled_dataset(image_list):
     print('[INFO] Creating unlabelled dataset on %d images.' %len(image_list))
@@ -264,7 +269,7 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
         # X_unlabelled = np.load(unlabelled_save)
         print('Features loaded from file')
     else:
-        X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled)
+        X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled, test=True)
         # X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
         print('Feature extraction time in minutes:', (time.time()-start)/60)
 
@@ -283,7 +288,7 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
     
     return pred
 
-def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, x_test_save, y_test_save, unlabelled_save, save = True, use_saved = True):
+def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True):
     start = time.time()
 
     image_list_labelled, label_list_labelled = read_data_labelled(image_dir_labelled, label_dir, b_n_labelled,
@@ -293,25 +298,25 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
     if use_saved:
         X_train = np.load(x_train_save)
         y_train = np.load(y_train_save)
-        X_test = np.load(x_test_save)
-        y_test = np.load(y_test_save)
         X_unlabelled = np.load(unlabelled_save)
         print('Features loaded from file')
     else:
-        X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled)
+        X_train, y_train = create_training_dataset(image_list_labelled, label_list_labelled)
         X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
         print('Feature extraction time in minutes:', (time.time() - start) / 60)
 
         if save:
             np.save(x_train_save, X_train)
             np.save(y_train_save, y_train)
-            np.save(x_test_save, X_test)
-            np.save(y_test_save, y_test)
             np.save(unlabelled_save, X_unlabelled)
+
+    ## Turn the X_train, y_train and X_unlabelled into a pandas dataframe something
+    X_train = pd.DataFrame.from_dict(X_train)
+    y_train = pd.DataFrame.from_dict(y_train)
+    X_unlabelled = pd.DataFrame.from_dict(X_unlabelled)
 
     iterations = 0
     train_f1s = []
-    test_f1s = []
     pseudo_labels = []
 
     # Assign value to initiate while loop
@@ -320,16 +325,12 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
     while len(high_prob) > 0:
         model = train_model(X_train, y_train, classifier, fr)
         y_hat_train = model.predict(X_train)
-        y_hat_test = model.predict(X_test)
 
         train_f1 = metrics.f1_score(y_train, y_hat_train)
-        test_f1 = metrics.f1_score(y_test, y_hat_test)
 
         print(f"Iteration {iterations}")
         print(f"Train f1: {train_f1}")
-        print(f"Test f1: {test_f1}")
         train_f1s.append(train_f1)
-        test_f1s.append(test_f1)
 
         # Generate predictions for the unlabelled data
         print("Now predicting labels for unlabelled data")
@@ -338,8 +339,6 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
         preds = model.predict(X_unlabelled)
         prob_0 = pred_probs[:,0]
         prob_1 = pred_probs[:,1]
-
-        # Check if probabilities >0
 
 
         # Store predictions in pd dataframe
