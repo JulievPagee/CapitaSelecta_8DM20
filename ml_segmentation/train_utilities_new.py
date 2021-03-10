@@ -21,6 +21,7 @@ import mahotas as mt
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 import scipy.ndimage as ndimage
+import pandas as pd
 
 def read_data_labelled(image_dir, label_dir, b_n, e_n):
 
@@ -138,6 +139,7 @@ def create_features(img, img_gray, label, train=True):
     lbp_points = lbp_radius*8
     h_ind = int((h_neigh - 1)/ 2)
     feature_img = np.zeros((img.shape[0],img.shape[1],7))
+    feature_img = np.zeros((img.shape[0], img.shape[1], 4))
     feature_img[:,:,:3] = img
     feature_img[:,:,3] = create_binary_pattern(img_gray, lbp_points, lbp_radius)
     feature_img[:,:,4] = variance_feature(img_gray)
@@ -232,11 +234,6 @@ def train_model(X, y, classifier, fr):
     print ('[INFO] Training Accuracy: %.2f' %model.score(X, y))
     return model
 
-def dice(pred, true, k = 1):
-    intersection = np.sum(pred[true==k]) * 2.0
-    dice = intersection / (np.sum(pred) + np.sum(true))
-    return dice
-
 def test_model(X, y, model):
 
     pred = model.predict(X)
@@ -244,29 +241,132 @@ def test_model(X, y, model):
     recall = metrics.recall_score(y, pred, average='weighted', labels=np.unique(pred))
     f1 = metrics.f1_score(y, pred, average='weighted', labels=np.unique(pred))
     accuracy = metrics.accuracy_score(y, pred)
-    dce = dice(pred,y)
 
     print ('--------------------------------')
     print ('[RESULTS] Accuracy: %.2f' %accuracy)
     print ('[RESULTS] Precision: %.2f' %precision)
     print ('[RESULTS] Recall: %.2f' %recall)
     print ('[RESULTS] F1: %.2f' %f1)
-    print ('[RESULTS] Dice: %.2f' %dce)
     print ('--------------------------------')
     return pred
 
-def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model):
+def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, x_test_save, y_test_save, unlabelled_save, save = True, use_saved = True):
 
     start = time.time()
 
     image_list_labelled, label_list_labelled = read_data_labelled(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled)
     image_list_unlabelled = read_data_unlabelled(image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled)
-    print('Feature extraction time in minutes:', (time.time()-start)/60)
-    X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled)
-    X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
+
+    if use_saved:
+        X_train = np.load(x_train_save)
+        y_train = np.load(y_train_save)
+        X_test = np.load(x_test_save)
+        y_test = np.load(y_test_save)
+        # X_unlabelled = np.load(unlabelled_save)
+        print('Features loaded from file')
+    else:
+        X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled)
+        # X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
+        print('Feature extraction time in minutes:', (time.time()-start)/60)
+
+        if save:
+            np.save(x_train_save, X_train)
+            np.save(y_train_save, y_train)
+            np.save(x_test_save, X_test)
+            np.save(y_test_save, y_test)
+            # np.save(unlabelled_save, X_unlabelled)
+
     model = train_model(X_train, y_train, classifier, fr)
     pred = test_model(X_test, y_test, model)
     pkl.dump(model, open(output_model, "wb"))
-    print ('Processing time in minutes:',(time.time()-start)/60)
+    print ('Total processing time in minutes:',(time.time()-start)/60)
+    print('Model saved as:', output_model)
     
     return pred
+
+def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, x_test_save, y_test_save, unlabelled_save, save = True, use_saved = True):
+    start = time.time()
+
+    image_list_labelled, label_list_labelled = read_data_labelled(image_dir_labelled, label_dir, b_n_labelled,
+                                                                  e_n_labelled)
+    image_list_unlabelled = read_data_unlabelled(image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled)
+
+    if use_saved:
+        X_train = np.load(x_train_save)
+        y_train = np.load(y_train_save)
+        X_test = np.load(x_test_save)
+        y_test = np.load(y_test_save)
+        X_unlabelled = np.load(unlabelled_save)
+        print('Features loaded from file')
+    else:
+        X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled)
+        X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
+        print('Feature extraction time in minutes:', (time.time() - start) / 60)
+
+        if save:
+            np.save(x_train_save, X_train)
+            np.save(y_train_save, y_train)
+            np.save(x_test_save, X_test)
+            np.save(y_test_save, y_test)
+            np.save(unlabelled_save, X_unlabelled)
+
+    iterations = 0
+    train_f1s = []
+    test_f1s = []
+    pseudo_labels = []
+
+    # Assign value to initiate while loop
+    high_prob = [1]
+
+    while len(high_prob) > 0:
+        model = train_model(X_train, y_train, classifier, fr)
+        y_hat_train = model.predict(X_train)
+        y_hat_test = model.predict(X_test)
+
+        train_f1 = metrics.f1_score(y_train, y_hat_train)
+        test_f1 = metrics.f1_score(y_test, y_hat_test)
+
+        print(f"Iteration {iterations}")
+        print(f"Train f1: {train_f1}")
+        print(f"Test f1: {test_f1}")
+        train_f1s.append(train_f1)
+        test_f1s.append(test_f1)
+
+        # Generate predictions for the unlabelled data
+        print("Now predicting labels for unlabelled data")
+
+        pred_probs = model.predict_proba(X_unlabelled)
+        preds = model.predict(X_unlabelled)
+        prob_0 = pred_probs[:,0]
+        prob_1 = pred_probs[:,1]
+
+        # Check if probabilities >0
+
+
+        # Store predictions in pd dataframe
+        df_pred_prob = pd.DataFrame([])
+        df_pred_prob['preds'] = preds
+        df_pred_prob['prob_0'] = prob_0
+        df_pred_prob['prob_1'] = prob_1
+        df_pred_prob.index = X_unlabelled.index
+
+        # Separate predictions with > 99% probability
+        high_prob = pd.concat([df_pred_prob.loc[df_pred_prob['prob_0'] > 0.99], df_pred_prob.loc[df_pred_prob['prob_1'] > 0.99]], axis=0)
+        print(f"{len(high_prob)} high-probability predictions added to training data")
+
+        pseudo_labels.append(len(high_prob))
+
+        # Really add them to x_train and the labels to y_train
+        X_train = pd.concat([X_train, X_unlabelled.loc[high_prob.index]], axis=0)
+        y_train = pd.concat([y_train, high_prob.preds])
+
+        # Drop pseudo labeled instances from the unlabelled data.
+        X_unlabelled = X_unlabelled.drop(index=high_prob.index)
+        print(f"{len(X_unlabelled)} unlabelled instances remaining. \n")
+
+        #update iterations counter
+        iterations += 1
+
+    pkl.dump(model, open(output_model, "wb"))
+    print('Total processing time in minutes:', (time.time() - start) / 60)
+    print('Model saved as:', output_model)
