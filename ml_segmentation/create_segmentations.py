@@ -1,6 +1,5 @@
 from create_segmentations_util import *
-
-model_name = 'alltrain'
+model_name = 'only_features_SVM'
 name = "Nathalie"
 
 if name == "GPU":
@@ -14,8 +13,11 @@ if name == "Nathalie":
     output_dir = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Output'
 
 #paths
-image_dir_validatiom = os.path.join(CLASS_DATA_PATH, 'Validation/Slices')                       #path to validation images
+image_dir_validation = os.path.join(CLASS_DATA_PATH, 'Validation/Slices')                       #path to validation images
+image_dir_validation = os.path.join(CLASS_DATA_PATH, 'TESTEN')
 model_savefile = model_name +'.sav'
 output_model = os.path.join(MODEL_SAVE_PATH, model_savefile)                                #specify path where model was saved
 
-main(image_dir_validatiom, output_model, output_dir)
+print(output_model)
+
+main(image_dir_validation, output_model, model_name, output_dir)
