@@ -33,7 +33,6 @@ def read_data_labelled(image_dir, label_dir, b_n, e_n):
     label_list = []
 
     for idx, file in enumerate(filelist):
-
         image_list.append(cv2.imread(file, 1))
         label_list.append(cv2.imread(labellist[idx], 0))
 
@@ -134,7 +133,7 @@ def create_features(img, img_gray, label, train=True):
 
     lbp_radius = 24 # local binary pattern neighbourhood
     h_neigh = 11 # haralick neighbourhood
-    num_examples = 90243 # number of examples per image to use for training model
+    num_examples = 1000 # number of examples per image to use for training modelpip instal
 
     lbp_points = lbp_radius*8
     h_ind = int((h_neigh - 1)/ 2)
@@ -211,8 +210,9 @@ def create_unlabelled_dataset(image_list):
 
     return X
 
-def train_model(X, y, classifier, fr):
-
+def train_model(X, y, classifier, fr, SSL=True):
+    if SSL:
+        y = y.values.ravel()
     if classifier == "SVM":
         from sklearn.svm import SVC
         print ('[INFO] Training Support Vector Machine model.')
@@ -233,6 +233,10 @@ def train_model(X, y, classifier, fr):
         from sklearn.ensemble import GradientBoostingClassifier
         model = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
         model.fit(X, y)
+    elif classifier == "KNN":
+        from sklearn.neighbors import KNeighborsClassifier
+        model = KNeighborsClassifier(n_neighbors=5)
+        model.fit(X,y)
 
     print ('[INFO] Model training complete.')
     print ('[INFO] Training Accuracy: %.2f' %model.score(X, y))
@@ -268,6 +272,7 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
         y_test = np.load(y_test_save)
         # X_unlabelled = np.load(unlabelled_save)
         print('Features loaded from file')
+        print('[INFO] Feature vector size:', X_train.shape)
     else:
         X_train, X_test, y_train, y_test = create_training_dataset(image_list_labelled, label_list_labelled, test=True)
         # X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
@@ -280,7 +285,7 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
             np.save(y_test_save, y_test)
             # np.save(unlabelled_save, X_unlabelled)
 
-    model = train_model(X_train, y_train, classifier, fr)
+    model = train_model(X_train, y_train, classifier, fr, SSL=False)
     pred = test_model(X_test, y_test, model)
     pkl.dump(model, open(output_model, "wb"))
     print ('Total processing time in minutes:',(time.time()-start)/60)
@@ -291,16 +296,16 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
 def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True):
     start = time.time()
 
-    image_list_labelled, label_list_labelled = read_data_labelled(image_dir_labelled, label_dir, b_n_labelled,
-                                                                  e_n_labelled)
-    image_list_unlabelled = read_data_unlabelled(image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled)
-
     if use_saved:
         X_train = np.load(x_train_save)
         y_train = np.load(y_train_save)
         X_unlabelled = np.load(unlabelled_save)
+        # X_unlabelled = X_train[:5]            #--- Deze uncommenten als je even snel wilt runnen als je features al hebt
         print('Features loaded from file')
     else:
+        image_list_labelled, label_list_labelled = read_data_labelled(image_dir_labelled, label_dir, b_n_labelled,
+                                                                      e_n_labelled)
+        image_list_unlabelled = read_data_unlabelled(image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled)
         X_train, y_train = create_training_dataset(image_list_labelled, label_list_labelled)
         X_unlabelled = create_unlabelled_dataset(image_list_unlabelled)
         print('Feature extraction time in minutes:', (time.time() - start) / 60)
@@ -316,21 +321,18 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
     X_unlabelled = pd.DataFrame.from_dict(X_unlabelled)
 
     iterations = 0
-    train_f1s = []
     pseudo_labels = []
 
     # Assign value to initiate while loop
     high_prob = [1]
 
+    total_added = 0
+
     while len(high_prob) > 0:
         model = train_model(X_train, y_train, classifier, fr)
         y_hat_train = model.predict(X_train)
 
-        train_f1 = metrics.f1_score(y_train, y_hat_train)
-
         print(f"Iteration {iterations}")
-        print(f"Train f1: {train_f1}")
-        train_f1s.append(train_f1)
 
         # Generate predictions for the unlabelled data
         print("Now predicting labels for unlabelled data")
@@ -352,6 +354,8 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
         high_prob = pd.concat([df_pred_prob.loc[df_pred_prob['prob_0'] > 0.99], df_pred_prob.loc[df_pred_prob['prob_1'] > 0.99]], axis=0)
         print(f"{len(high_prob)} high-probability predictions added to training data")
 
+        total_added = total_added + len(high_prob)
+
         pseudo_labels.append(len(high_prob))
 
         # Really add them to x_train and the labels to y_train
@@ -365,6 +369,7 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
         #update iterations counter
         iterations += 1
 
+    print('Total unlabelled data added: {}'.format(total_added))
     pkl.dump(model, open(output_model, "wb"))
     print('Total processing time in minutes:', (time.time() - start) / 60)
     print('Model saved as:', output_model)

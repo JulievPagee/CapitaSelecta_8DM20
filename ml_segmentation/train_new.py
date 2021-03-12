@@ -1,7 +1,7 @@
 from train_utilities_new import *
 
-model_name = 'all_features_RF'
-data_names = 'all_train_all_features'
+model_name = 'features_RF'
+data_names = 'all_features'
 name = "Nathalie"
 
 if name == "GPU":
@@ -10,15 +10,15 @@ if name == "GPU":
     FEATURE_SAVE_PATH = '/home/8dm20-4/Features'
 
 if name == "Nathalie":
-    CLASS_DATA_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Codes_def\ClassData'    #Data folder
-    MODEL_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Models'                       #Define where the model should be saved
-    FEATURE_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Features'
+    CLASS_DATA_PATH = r'C:\Nathalie\Tue/Master\Jaar_1\Q3\Capita_Selecta\Project\Codes_def\ClassData'    #Data folder
+    MODEL_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar_1\Q3\Capita_Selecta\Project\Models'                       #Define where the model should be saved
+    FEATURE_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar_1\Q3\Capita_Selecta\Project\Features'
 
 
 #paths
-image_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled/Slices')                       #path to labelled images
-label_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled/Masks/Slices')                          #path to labels
-image_dir_unlabelled = os.path.join(CLASS_DATA_PATH, 'Unlabelled/Slices')                   #path to unlabelled data
+image_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled\Slices')                       #path to labelled images
+label_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled\Masks\Slices')                          #path to labels
+image_dir_unlabelled = os.path.join(CLASS_DATA_PATH, 'Unlabelled\Slices')                   #path to unlabelled data
 model_savefile = model_name +'.sav'
 output_model = os.path.join(MODEL_SAVE_PATH, model_savefile)                                #specify path to save model
 x_train_savefile = data_names + '_x_train.npy'
@@ -35,7 +35,7 @@ unlabelled_save = os.path.join(FEATURE_SAVE_PATH, unlabelled_savefile)
 
 #Classifier properties
 classifier = 'RF'                                          #options 'SVM', 'RF', 'GBC'
-fr = False                                                  #specify feature reduction True/False (now PCA)
+fr = True                                                  #specify feature reduction True/False (now PCA)
 
 #Creating subset of data
 b_n_labelled = 0                                                        #specify first labelled image
@@ -49,4 +49,4 @@ e_n_unlabelled = 1
 # - use_saved = als je de features al een keer heb bepaald en deze wil gebruiken, hij gebruikt dan weer data_names, default=TRUE
 #  LET OP ALS JE HEM NOG NOOIT HEB GERUND EN DE FEATURES DUS NOG NIET HEBT MOET JE USE_SAVED OP FALSE ZETTEN
 pred = main(image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, x_test_save, y_test_save, unlabelled_save, save=True, use_saved=False)
-# pred_SSL = image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True
+# pred_SSL = SSL(image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True)
