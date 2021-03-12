@@ -59,19 +59,19 @@ def slice_to_3D(data_list, save_path):
         img = data_path+ patient_path + item + '.png'
         img = sitk.ReadImage(img)
         img = sitk.GetArrayFromImage(img)
+        img = np.expand_dims(img, axis=2)
         if firstIteration:
             final_image = img
             firstIteration=False
         else:
             final_image = np.concatenate(([img, final_image ]), axis=2)
-            #error: axis 2 is out of bounds for array of dimension 2
-            # wanneer ik axis = 1 gebruik komen ze naast elkaar te staan.
 
     final_image= Image.fromarray(final_image)
     final_image.show()
 
+patient_num = '107'
+patient_path = 'img_p' + patient_num +'_slice_'
 data_path = 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old/ClassData/Labelled/Slices/'
-patient_path = 'img_p107_slice_'
 data_list = [ '1', '2', '3']
 save_path= 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old'
 save_name= 'final_image'
