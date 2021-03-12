@@ -66,13 +66,13 @@ def slice_to_3D(data_list, save_path):
         else:
             final_image = np.concatenate(([img, final_image ]), axis=2)
 
-    final_image= Image.fromarray(final_image)
-    final_image.show()
+    return final_image
 
 patient_num = '107'
 patient_path = 'img_p' + patient_num +'_slice_'
 data_path = 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old/ClassData/Labelled/Slices/'
-data_list = [ '1', '2', '3']
+data_list = list(range(0,86))
+data_list = [str(i) for i in data_list]
 save_path= 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old'
 save_name= 'final_image'
 
