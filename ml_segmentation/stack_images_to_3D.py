@@ -7,23 +7,9 @@ Created on 12/03/2021
 import cv2
 import numpy as np
 import SimpleITK as sitk
-from PIL import Image
-import pylab as plt
-from glob import glob
-import argparse
+from scrollview import *
 import os
-import progressbar
-import pickle as pkl
-from numpy.lib import stride_tricks
-from skimage import feature
-from sklearn import metrics
-from sklearn.model_selection import train_test_split
-import time
-import mahotas as mt
-from sklearn.pipeline import Pipeline
-from sklearn.decomposition import PCA
-import scipy.ndimage as ndimage
-import pandas as pd
+
 
 #option 1
 #ref: https://stackoverflow.com/questions/31573872/how-to-read-multiple-images-and-create-a-3d-matrix-with-them
@@ -50,7 +36,7 @@ import pandas as pd
 
 #doel (333,271,86) array maken.
 #option 2 lijkt me het handiste
-def slice_to_3D(data_list, save_path):
+def slice_to_3D(data_list, save_dir, save_name):
 
     final_image = np.array([])
     final_image = np.zeros((333,271,86))
@@ -60,20 +46,25 @@ def slice_to_3D(data_list, save_path):
         img = sitk.ReadImage(img)
         img = sitk.GetArrayFromImage(img)
         img = np.expand_dims(img, axis=2)
+
         if firstIteration:
             final_image = img
             firstIteration=False
         else:
             final_image = np.concatenate(([img, final_image ]), axis=2)
 
-    return final_image
+
+    final_image = sitk.GetImageFromArray(final_image)
+    save_path = os.path.join(save_dir, save_name)  # get the save path
+    sitk.WriteImage(final_image, save_path)
 
 patient_num = '107'
 patient_path = 'img_p' + patient_num +'_slice_'
 data_path = 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old/ClassData/Labelled/Slices/'
 data_list = list(range(0,86))
 data_list = [str(i) for i in data_list]
-save_path= 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old'
-save_name= 'final_image'
+save_dir= 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old'
+save_name= 'final_image.mhd'
 
-slice_to_3D(data_list,save_path)
+slice_to_3D(data_list, save_dir, save_name)
+
