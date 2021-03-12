@@ -12,6 +12,11 @@ if name == "Nathalie":
     MODEL_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Models'                        #Define where the model was saved
     output_dir = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Output'
 
+if name == "Anouk":
+    CLASS_DATA_PATH = r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\ml_segmentation\ClassData'    #Data folder
+    MODEL_SAVE_PATH = r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\ml_segmentation\Models'                       #Define where the model should be saved
+    output_dir = r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\ml_segmentation\Output'
+
 #paths
 image_dir_validation = os.path.join(CLASS_DATA_PATH, 'Validation/Slices')                       #path to validation images
 image_dir_validation = os.path.join(CLASS_DATA_PATH, 'TESTEN')

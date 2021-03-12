@@ -4,6 +4,8 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 from PIL import Image
 
+if name == "Anouk":
+    CLASS_DEF_PATH = r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\ml_segmentation'    #Data folder
 
 CODES_DEF_PATH = r'C:\Nathalie\Tue\Master\Jaar 1\Q3\Capita Selecta\Project\Codes_def'
 
