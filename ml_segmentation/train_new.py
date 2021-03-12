@@ -44,9 +44,11 @@ b_n_unlabelled = 0                                                      #specify
 e_n_unlabelled = 7*86                                                   #specify last unlabelled image
 e_n_unlabelled = 1
 
+threshold = 0.80                                                        #Threshold for adding the unlabelled images!
+
 #code to train model, all needed functions are in train_utilities_new.py
 # - save = als je de features bepaald wilt opslaan dit gebeurt onder de naam data_names, default = TRUE
 # - use_saved = als je de features al een keer heb bepaald en deze wil gebruiken, hij gebruikt dan weer data_names, default=TRUE
 #  LET OP ALS JE HEM NOG NOOIT HEB GERUND EN DE FEATURES DUS NOG NIET HEBT MOET JE USE_SAVED OP FALSE ZETTEN
 pred = main(image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, x_test_save, y_test_save, unlabelled_save, save=True, use_saved=False)
-# pred_SSL = SSL(image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True)
+# pred_SSL = SSL(threshold, image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True)

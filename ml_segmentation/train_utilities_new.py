@@ -293,7 +293,7 @@ def main(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_un
     
     return pred
 
-def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True):
+def SSL(threshold, image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabeled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True):
     start = time.time()
 
     if use_saved:
@@ -334,39 +334,42 @@ def SSL(image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, image_dir_unl
 
         print(f"Iteration {iterations}")
 
-        # Generate predictions for the unlabelled data
-        print("Now predicting labels for unlabelled data")
+        if len(X_unlabelled) > 0:
+            print("Length of unlabelled: {}".format(len(X_unlabelled)))
+            # Generate predictions for the unlabelled data
+            print("Now predicting labels for unlabelled data")
 
-        pred_probs = model.predict_proba(X_unlabelled)
-        preds = model.predict(X_unlabelled)
-        prob_0 = pred_probs[:,0]
-        prob_1 = pred_probs[:,1]
+            pred_probs = model.predict_proba(X_unlabelled)
+            preds = model.predict(X_unlabelled)
+            prob_0 = pred_probs[:, 0]
+            prob_1 = pred_probs[:, 1]
 
+            # Store predictions in pd dataframe
+            df_pred_prob = pd.DataFrame([])
+            df_pred_prob['preds'] = preds
+            df_pred_prob['prob_0'] = prob_0
+            df_pred_prob['prob_1'] = prob_1
+            df_pred_prob.index = X_unlabelled.index
 
-        # Store predictions in pd dataframe
-        df_pred_prob = pd.DataFrame([])
-        df_pred_prob['preds'] = preds
-        df_pred_prob['prob_0'] = prob_0
-        df_pred_prob['prob_1'] = prob_1
-        df_pred_prob.index = X_unlabelled.index
+            # Separate predictions with > 99% probability
+            high_prob = pd.concat(
+                [df_pred_prob.loc[df_pred_prob['prob_0'] > threshold], df_pred_prob.loc[df_pred_prob['prob_1'] > threshold]],
+                axis=0)
+            print(f"{len(high_prob)} high-probability predictions added to training data")
 
-        # Separate predictions with > 99% probability
-        high_prob = pd.concat([df_pred_prob.loc[df_pred_prob['prob_0'] > 0.99], df_pred_prob.loc[df_pred_prob['prob_1'] > 0.99]], axis=0)
-        print(f"{len(high_prob)} high-probability predictions added to training data")
+            total_added = total_added + len(high_prob)
 
-        total_added = total_added + len(high_prob)
+            pseudo_labels.append(len(high_prob))
 
-        pseudo_labels.append(len(high_prob))
+            # Really add them to x_train and the labels to y_train
+            X_train = pd.concat([X_train, X_unlabelled.loc[high_prob.index]], axis=0)
+            y_train = pd.concat([y_train, high_prob.preds])
 
-        # Really add them to x_train and the labels to y_train
-        X_train = pd.concat([X_train, X_unlabelled.loc[high_prob.index]], axis=0)
-        y_train = pd.concat([y_train, high_prob.preds])
+            # Drop pseudo labeled instances from the unlabelled data.
+            X_unlabelled = X_unlabelled.drop(index=high_prob.index)
+            print(f"{len(X_unlabelled)} unlabelled instances remaining. \n")
 
-        # Drop pseudo labeled instances from the unlabelled data.
-        X_unlabelled = X_unlabelled.drop(index=high_prob.index)
-        print(f"{len(X_unlabelled)} unlabelled instances remaining. \n")
-
-        #update iterations counter
+        # update iterations counter
         iterations += 1
 
     print('Total unlabelled data added: {}'.format(total_added))
