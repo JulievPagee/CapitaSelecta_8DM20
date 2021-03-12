@@ -7,7 +7,7 @@ Created on 12/03/2021
 import cv2
 import numpy as np
 import SimpleITK as sitk
-from scrollview import *
+
 import os
 
 
@@ -39,19 +39,19 @@ import os
 def slice_to_3D(data_list, save_dir, save_name):
 
     final_image = np.array([])
-    final_image = np.zeros((333,271,86))
+    final_image = np.zeros((86,333,271))
     firstIteration = True
     for item in data_list:
         img = data_path+ patient_path + item + '.png'
         img = sitk.ReadImage(img)
         img = sitk.GetArrayFromImage(img)
-        img = np.expand_dims(img, axis=2)
+        img = np.expand_dims(img, axis=0)
 
         if firstIteration:
             final_image = img
             firstIteration=False
         else:
-            final_image = np.concatenate(([img, final_image ]), axis=2)
+            final_image = np.concatenate(([final_image, img ]), axis=0)
 
 
     final_image = sitk.GetImageFromArray(final_image)
@@ -59,11 +59,11 @@ def slice_to_3D(data_list, save_dir, save_name):
     sitk.WriteImage(final_image, save_path)
 
 patient_num = '107'
-patient_path = 'img_p' + patient_num +'_slice_'
-data_path = 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old/ClassData/Labelled/Slices/'
+patient_path = 'p' + patient_num +'_lb_'
+data_path = 'E:/CSMIA/2D_ML/lb/'
 data_list = list(range(0,86))
 data_list = [str(i) for i in data_list]
-save_dir= 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/ml_segmentation_old'
+save_dir= 'E:/CSMIA/2D_ML/'
 save_name= 'final_image.mhd'
 
 slice_to_3D(data_list, save_dir, save_name)
