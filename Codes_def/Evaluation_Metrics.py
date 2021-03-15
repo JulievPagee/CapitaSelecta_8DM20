@@ -6,6 +6,8 @@ import imageio
 import os
 import SimpleITK as sitk
 import imageio
+from sklearn.metrics import adjusted_rand_score
+import seg_metrics.seg_metrics as sg
 #import tensorflow as tf
 
 def calculate_sensitivity_specificity(y_test, y_pred):
@@ -33,8 +35,13 @@ def calculate_sensitivity_specificity(y_test, y_pred):
     # Calculate accuracy
     accuracy = (np.sum(true_pos) + np.sum(true_neg)) / (
                 np.sum(true_neg) + np.sum(true_pos) + np.sum(false_neg) + np.sum(false_pos))
-
-    return sensitivity, specificity, accuracy
+    TP = np.sum(true_pos)
+    TN = np.sum(true_neg)
+    FP = np.sum(false_pos)
+    FN = np.sum(false_neg)
+    VS = 1 - (abs(FN-FP))/(2*TP+FP+FN)
+    AUC = 1 - ((1-sensitivity)+(1-specificity))/2
+    return sensitivity, specificity, accuracy, VS, AUC
 
 def dice(pred, true, k = 1):
     intersection = np.sum(pred[true==k]) * 2.0
@@ -42,31 +49,31 @@ def dice(pred, true, k = 1):
     return dice
 
 
-
+codes_def_path = 'E:/CSMIA/Codes_def/'
 # test data
-PATH_True = os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\Codes_def\TrainingData\p133\prostaat.mhd')
-PATH_PREDICTED =os.path.join(r'C:\Users\20165272\Documents\8DM20 Capita Selecta\Project\Codes_def\Results_atl_FINAL\transform_p133\Transformed_masks\mask_B_spline_p133\result.mhd')
-TRUE_im = sitk.ReadImage(PATH_True)[:,:,:]
-TRUE_im = sitk.GetArrayFromImage(TRUE_im)
-PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)[:,:,:]
-PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)
+PATH_True = os.path.join(codes_def_path, 'TrainingData/p125/prostaat.mhd')
+PATH_PREDICTED =os.path.join(codes_def_path, 'Results_atl_FINAL/transform_p125/Transformed_masks/mask_B_spline_p125/result.mhd')
+TRUE_im = sitk.ReadImage(PATH_True)
+TRUE_im = sitk.GetArrayFromImage(TRUE_im)[:,90:263,50:241]
+PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)
+PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)[:,90:263,50:241]
 
 y_test = TRUE_im
 y_pred = PREDICTED_im
 
-sensitivity, specificity, accuracy = calculate_sensitivity_specificity(y_test, y_pred)
+sensitivity, specificity, accuracy, VS, AUC = calculate_sensitivity_specificity(y_test, y_pred)
 dice = dice(y_pred, y_test)
+
+y_test = y_test.ravel()
+y_pred = y_pred.ravel()
+ARS = adjusted_rand_score(y_test, y_pred)
+
 print ('Sensitivity:', sensitivity)
 print ('Specificity:', specificity)
 print ('Accuracy:', accuracy)
 print('Dice:', dice)
 
 
-fig, ax = plt.subplots(1, 2, figsize=(20, 5))
-ax[0].imshow(TRUE_im, cmap='gray')
-ax[0].set_title('True')
-ax[1].imshow(PREDICTED_im, cmap='gray')
-ax[1].set_title('Predicted')
-plt.show()
-
+print('VS:',VS)
+print('ARS', ARS)
 
