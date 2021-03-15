@@ -49,14 +49,30 @@ def dice(pred, true, k = 1):
     return dice
 
 
-codes_def_path = 'E:/CSMIA/Codes_def/'
+patient = 'p119'
+codes_def_path = 'C:/Users/20165272/Documents/8DM20 Capita Selecta/Project/Codes_def'
 # test data
-PATH_True = os.path.join(codes_def_path, 'TrainingData/p125/prostaat.mhd')
-PATH_PREDICTED =os.path.join(codes_def_path, 'Results_atl_FINAL/transform_p125/Transformed_masks/mask_B_spline_p125/result.mhd')
+PATH_True = os.path.join(codes_def_path, 'TrainingData/'+ patient+ '/prostaat.mhd')
+PATH_PREDICTED =os.path.join(codes_def_path, 'Results_atl_FINAL/transform_'+ patient +'/Transformed_masks/mask_B_spline_'+ patient +'/result.mhd')
 TRUE_im = sitk.ReadImage(PATH_True)
-TRUE_im = sitk.GetArrayFromImage(TRUE_im)[:,90:263,50:241]
+#TRUE_im = sitk.GetArrayFromImage(TRUE_im)[:,90:263,50:241]
+TRUE_im = sitk.GetArrayFromImage(TRUE_im)
 PREDICTED_im = sitk.ReadImage(PATH_PREDICTED)
-PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)[:,90:263,50:241]
+#PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)[:,90:263,50:241]
+PREDICTED_im = sitk.GetArrayFromImage(PREDICTED_im)
+
+csv_file = 'metrics_'+ patient+'.csv'
+labels = [1] #alleen op de foreground pixels
+metrics = sg.write_metrics(labels=labels,  # exclude background
+                  gdth_path=PATH_True,
+                  pred_path=PATH_PREDICTED,
+                  csv_file=csv_file, metrics= ['dice', 'hd95', 'hd', 'msd'])
+
+print('dice by sg', metrics['dice'],
+      'hd95', metrics['hd95'],
+      'hd', metrics['hd'],
+      'msd', metrics['msd'])
+
 
 y_test = TRUE_im
 y_pred = PREDICTED_im
@@ -67,6 +83,11 @@ dice = dice(y_pred, y_test)
 y_test = y_test.ravel()
 y_pred = y_pred.ravel()
 ARS = adjusted_rand_score(y_test, y_pred)
+
+
+
+
+
 
 print ('Sensitivity:', sensitivity)
 print ('Specificity:', specificity)
