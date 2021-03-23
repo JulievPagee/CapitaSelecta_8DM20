@@ -1,0 +1,16 @@
+p119 
+Voor alleen de positieve pixels (fore ground)
+dice by sg [0.8208277874602011] hd95 [7.4652557373046875] hd [20.09514045715332] msd [2.1805436690370956]
+
+
+
+p125
+Voor alleen de positieve pixels (fore ground)
+dice by sg [0.8158438787536892] hd95 [6.02377462387085] hd [12.010122299194336] msd [1.965938151558634]
+
+
+
+
+p133
+dice by sg [0.8053947467226846] hd95 [6.385009288787842] hd [15.345853805541992] msd [1.8355265648357415]
+Voor alleen de positieve pixels (fore ground)
