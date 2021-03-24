@@ -134,7 +134,7 @@ def edges(img_grey):
     return canny
 
 
-def create_features(img, img_gray, label, train=True):
+def create_features(img, img_gray, label, train=True, subsamplen=True):
     lbp_radius = 24  # local binary pattern neighbourhood
     h_neigh = 11  # haralick neighbourhood
     num_examples = 1000  # number of examples per image to use for training modelpip instal
@@ -151,10 +151,11 @@ def create_features(img, img_gray, label, train=True):
     feature_img = feature_img[h_ind:-h_ind, h_ind:-h_ind]
     features = feature_img.reshape(feature_img.shape[0] * feature_img.shape[1], feature_img.shape[2])
 
-
-    ss_idx = subsample_idx(0, features.shape[0], num_examples)
-    features = features[ss_idx]
-
+    if subsamplen:
+        ss_idx = subsample_idx(0, features.shape[0], num_examples)
+        features = features[ss_idx]
+    else:
+        ss_idx=[]
 
     h_features = harlick_features(img_gray, h_neigh, ss_idx)
     features = np.hstack((features, h_features))
@@ -307,10 +308,10 @@ def SSL(threshold, image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, im
     if use_saved:
         X_train = np.load(x_train_save)
         y_train = np.load(y_train_save)
-        # X_unlabelled = np.load(unlabelled_save)
-        X_unlabelled = X_train[:5]            #--- Deze uncommenten als je even snel wilt runnen als je features al hebt
-        X_train = X_train[5:10]
-        y_train = y_train[5:10]
+        X_unlabelled = np.load(unlabelled_save)
+        # X_unlabelled = X_train[:5]            #--- Deze uncommenten als je even snel wilt runnen als je features al hebt
+        # X_train = X_train[5:10]
+        # y_train = y_train[5:10]
         print('Features loaded from file')
         print('Feature size train {}'.format(X_train.shape))
         print('Feature size unlabelled {}'.format(X_unlabelled.shape))
@@ -341,6 +342,8 @@ def SSL(threshold, image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, im
     total_added = 0
 
     while len(high_prob) > 0:
+        if (iterations > 0) and (len(high_prob) < 200):
+            break
         model = train_model(X_train, y_train, classifier, fr)
         y_hat_train = model.predict(X_train)
 
@@ -396,7 +399,7 @@ def create_features2(img):
 
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    features, _ = create_features(img, img_gray, label=None, train=False)
+    features, _ = create_features(img, img_gray, label=None, train=False, subsamplen=False)
 
     return features
 
@@ -460,7 +463,7 @@ def infer_images(image_dir, model, model_name, output_dir, data_names, FEATURE_S
         iteration = iteration + 1
 
 #### MAIN CODE
-model_name = 'features_SSL2'
+model_name = 'features_SSL3'
 data_names = 'features'
 name = "Nathalie"
 
@@ -475,10 +478,10 @@ if name == "GPU":
     image_dir_unlabelled = os.path.join(CLASS_DATA_PATH, 'Unlabelled/Slices')  # path to unlabelled data
 
 if name == "Nathalie":
-    CLASS_DATA_PATH = 'E:/CSMIA/Codes_def/ClassData/'    #Data folder
-    MODEL_SAVE_PATH = 'E:/CSMIA/Codes_def/Models'                       #Define where the model should be saved
-    FEATURE_SAVE_PATH = 'E:/CSMIA/Codes_def/Features'
-    output_dir = 'E:/CSMIA/Codes_def/Output'
+    CLASS_DATA_PATH = r'C:\Nathalie\Tue/Master\Jaar_1\Q3\Capita_Selecta\Project\Codes_def\ClassData'    #Data folder
+    MODEL_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar_1\Q3\Capita_Selecta\Project\Models'                       #Define where the model should be saved
+    FEATURE_SAVE_PATH = r'C:\Nathalie\Tue\Master\Jaar_1\Q3\Capita_Selecta\Project\Features'
+    output_dir = r'C:\Nathalie\Tue\Master\Jaar_1\Q3\Capita_Selecta\Project\Output'
     image_dir_validation = os.path.join(CLASS_DATA_PATH, 'Validation\Slices')  # path to validation images
     image_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled\Slices')  # path to labelled images
     label_dir_labelled = os.path.join(CLASS_DATA_PATH, 'Labelled\Masks\Slices')  # path to labels
@@ -516,7 +519,7 @@ threshold = 0.95                                                        #Thresho
 # - use_saved = als je de features al een keer heb bepaald en deze wil gebruiken, hij gebruikt dan weer data_names, default=TRUE
 #  LET OP ALS JE HEM NOG NOOIT HEB GERUND EN DE FEATURES DUS NOG NIET HEBT MOET JE USE_SAVED OP FALSE ZETTEN
 # pred = main(image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, x_test_save, y_test_save, unlabelled_save, save=True, use_saved=False)
-model_pred_SSL = SSL(threshold, image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = False)
+model_pred_SSL = SSL(threshold, image_dir_labelled, label_dir_labelled, b_n_labelled, e_n_labelled, image_dir_unlabelled, b_n_unlabelled, e_n_unlabelled, classifier, fr, output_model, x_train_save, y_train_save, unlabelled_save, save = True, use_saved = True)
 
 
 infer_images(image_dir_validation, model_pred_SSL, model_name, output_dir, data_names, FEATURE_SAVE_PATH, save_f=True, use_saved_f=False)
