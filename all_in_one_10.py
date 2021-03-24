@@ -342,9 +342,9 @@ def SSL(threshold, image_dir_labelled, label_dir, b_n_labelled, e_n_labelled, im
     total_added = 0
 
     while len(high_prob) > 0:
-        if (iterations == 10):
-            break
         model = train_model(X_train, y_train, classifier, fr)
+        if (iterations == 11):
+            break
         y_hat_train = model.predict(X_train)
 
         print(f"Iteration {iterations}")
